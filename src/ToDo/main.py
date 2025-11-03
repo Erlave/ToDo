@@ -32,7 +32,10 @@ done_parser.add_argument("task", type=str, nargs="+", help="Task ID or title")
 undone_parser = subparsers.add_parser("undone", help="Mark a task as pending again")
 undone_parser.add_argument("task_identifier", help="Task ID or title to mark as pending")
 
+# --- remove command ---
 
+remove_parser = subparsers.add_parser("remove", help="Remove a task by ID or title")
+remove_parser.add_argument("task_identifier",nargs="+", help="Task ID or title to remove")
 
 
 
@@ -56,6 +59,10 @@ def main():
 
     elif args.command == "undone":
         commands.mark_undone(args.task_identifier)
+
+    elif args.command == "remove":
+        remove = " ".join(args.task_identifier)
+        commands.remove_task(remove)
 
 
     elif args.command == "list":

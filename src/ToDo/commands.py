@@ -92,3 +92,30 @@ def mark_undone(task_identifier):
 
     finally:
         conn.close()
+
+
+
+
+
+def remove_task(task_identifier):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        if task_identifier.isdigit():
+            cur.execute("DELETE FROM tasks WHERE id = ?", (int(task_identifier),))
+        else:
+            cur.execute("DELETE FROM tasks WHERE title = ?", (task_identifier,))
+
+        if cur.rowcount == 0:
+            print("No tasks found.")
+        else:
+            print(f"task '{task_identifier}' is deleted ")
+
+        conn.commit()
+
+    except Exception as e:
+        print("error in update your task ! Please try again", e)
+
+    finally:
+        conn.close()
