@@ -25,3 +25,30 @@ def list_tasks():
     for id, title, done in rows:
         status = "✔️" if done else "⏳"
         print(f"{id}. {status} {title}")
+
+
+
+
+
+
+
+def mark_done(task_identifier):
+    conn = get_connection()
+    c = conn.cursor()
+
+    # بررسی اینکه task_identifier عدد هست یا نه
+    if task_identifier.isdigit():
+        # بر اساس id
+        c.execute("UPDATE tasks SET done = 1 WHERE id = ?", (int(task_identifier),))
+    else:
+        # بر اساس title
+        c.execute("UPDATE tasks SET done = 1 WHERE title = ?", (task_identifier,))
+
+    conn.commit()
+
+    if c.rowcount == 0:
+        print(f"'{task_identifier}' is not found")
+    else:
+        print(f"task '{task_identifier}' is done ")
+
+    conn.close()
