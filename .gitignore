@@ -1,0 +1,31 @@
+# Byte-compiled / Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build outputs
+build/
+dist/
+*.egg-info/
+installer/*.exe
+
+# Database & local data
+data/
+*.db
+
+# OS junk files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.log
+
+# dotenv / secrets
+.env
