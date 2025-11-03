@@ -10,6 +10,7 @@ subparsers = parser.add_subparsers(dest="command")
 
 
 # --- add command ---
+
 add_parser = subparsers.add_parser("add", help="Add a new task")
 add_parser.add_argument("title", type=str, nargs="+", help="Title of the task to add")
 
@@ -17,10 +18,27 @@ add_parser.add_argument("title", type=str, nargs="+", help="Title of the task to
 
 list_parser = subparsers.add_parser("list", help="Show all tasks")
 
+list_group = list_parser.add_mutually_exclusive_group()
+list_group.add_argument("-d", "--done", action="store_true", help="Show only done tasks")
+list_group.add_argument("-p", "--pending", action="store_true", help="Show only pending tasks")
 
-# --- mark done ---
+# --- mark done command ---
+
 done_parser = subparsers.add_parser("done", help="Mark a task as done")
 done_parser.add_argument("task", type=str, nargs="+", help="Task ID or title")
+
+# --- undone command ---
+
+undone_parser = subparsers.add_parser("undone", help="Mark a task as pending again")
+undone_parser.add_argument("task_identifier", help="Task ID or title to mark as pending")
+
+
+
+
+
+
+
+
 
 
 
@@ -31,13 +49,22 @@ def main():
     if args.command == "add":
         titlee = " ".join(args.title)
         commands.add_task(titlee)
-
-    elif args.command == "list":
-        commands.list_tasks()
     
     elif args.command == "done":
         task_identifier = " ".join(args.task)
         commands.mark_done(task_identifier)
+
+    elif args.command == "undone":
+        commands.mark_undone(args.task_identifier)
+
+
+    elif args.command == "list":
+        if args.done:
+            commands.list_tasks(filter_status="done")
+        elif args.pending:
+            commands.list_tasks(filter_status="pending")
+        else:
+            commands.list_tasks()
 
     else:
         parser.print_help()

@@ -1,4 +1,7 @@
+
+
 import sqlite3
+from pathlib import Path
 from .config import DB_PATH
 
 def get_connection():
@@ -6,13 +9,15 @@ def get_connection():
 
 def init_db():
     conn = get_connection()
-    c = conn.cursor()
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS tasks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        done INTEGER DEFAULT 0
-    )
-    """)
+    cur = conn.cursor()
+
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            status TEXT DEFAULT 'pending'
+        )
+    ''')
+
     conn.commit()
     conn.close()

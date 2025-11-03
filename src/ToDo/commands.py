@@ -1,31 +1,15 @@
 import sqlite3
 from .db import get_connection
 
+
+
 def add_task(title):
     conn = get_connection()
-    c = conn.cursor()
-    c.execute("INSERT INTO tasks (title) VALUES (?)", (title,))
+    cur = conn.cursor()
+    cur.execute("INSERT INTO tasks (title, status) VALUES (?, 'pending')", (title,))
     conn.commit()
     conn.close()
     print(f"Task added: {title}")
-
-
-def list_tasks():
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute("SELECT id, title, done FROM tasks ORDER BY id")
-    rows = c.fetchall()
-    conn.close()
-
-    if not rows:
-        print(" There is no task ...!")
-        return
-
-    print("📋 Task list : \n")
-    for id, title, done in rows:
-        status = "✔️" if done else "⏳"
-        print(f"{id}. {status} {title}")
-
 
 
 
@@ -34,21 +18,77 @@ def list_tasks():
 
 def mark_done(task_identifier):
     conn = get_connection()
-    c = conn.cursor()
+    cur = conn.cursor()
 
-    # بررسی اینکه task_identifier عدد هست یا نه
-    if task_identifier.isdigit():
-        # بر اساس id
-        c.execute("UPDATE tasks SET done = 1 WHERE id = ?", (int(task_identifier),))
+    try:
+        # بررسی اینکه ورودی عددیه (id) یا متن (عنوان)
+        if task_identifier.isdigit():
+            cur.execute("UPDATE tasks SET status = 'done' WHERE id = ?", (int(task_identifier),))
+        else:
+            cur.execute("UPDATE tasks SET status = 'done' WHERE title = ?", (task_identifier,))
+
+        if cur.rowcount == 0:
+            print(f"'{task_identifier}' is not found")
+        else:
+            print(f"task '{task_identifier}' is done ")
+
+        conn.commit()
+
+    except Exception as e:
+        print("error in update your task ! Please try again", e)
+
+    finally:
+        conn.close()
+
+def list_tasks(filter_status=None):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    if filter_status == "done":
+        cur.execute("SELECT id, title, status FROM tasks WHERE status='done'")
+    elif filter_status == "pending":
+        cur.execute("SELECT id, title, status FROM tasks WHERE status='pending'")
     else:
-        # بر اساس title
-        c.execute("UPDATE tasks SET done = 1 WHERE title = ?", (task_identifier,))
+        cur.execute("SELECT id, title, status FROM tasks")
 
-    conn.commit()
+    rows = cur.fetchall()
 
-    if c.rowcount == 0:
-        print(f"'{task_identifier}' is not found")
+    if not rows:
+        print("No tasks found.")
     else:
-        print(f"task '{task_identifier}' is done ")
+        print("📋 Task list : \n")
+        for row in rows:
+            status_icon = "✅" if row[2] == "done" else "🕓"
+            print(f"{row[0]}. {row[1]} {status_icon}")
 
     conn.close()
+
+
+
+
+
+
+
+
+def mark_undone(task_identifier):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        if task_identifier.isdigit():
+            cur.execute("UPDATE tasks SET status = 'pending' WHERE id = ?", (int(task_identifier),))
+        else:
+            cur.execute("UPDATE tasks SET status = 'pending' WHERE title = ?", (task_identifier,))
+
+        if cur.rowcount == 0:
+            print("No tasks found.")
+        else:
+            print(f"task '{task_identifier}' is undone ")
+
+        conn.commit()
+
+    except Exception as e:
+        print("error in update your task ! Please try again", e)
+
+    finally:
+        conn.close()
