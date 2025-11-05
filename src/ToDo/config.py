@@ -1,9 +1,8 @@
-import os
 import sys
 from pathlib import Path
 
 APP_NAME = "ErlaveTodo"
-
+APP_VERSION = "0.1.0"
 
 
 if getattr(sys, "_MEIPASS", False):
