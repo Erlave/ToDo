@@ -37,6 +37,13 @@ undone_parser.add_argument("task_identifier", help="Task ID or title to mark as 
 remove_parser = subparsers.add_parser("remove", help="Remove a task by ID or title")
 remove_parser.add_argument("task_identifier",nargs="+", help="Task ID or title to remove")
 
+# --- clear command ---
+
+clear_parser = subparsers.add_parser("clear", help="Clear tasks")
+group = clear_parser.add_mutually_exclusive_group()
+group.add_argument("-d", "--done", action="store_true", help="Clear only done tasks")
+group.add_argument("-p", "--pending", action="store_true", help="Clear only pending tasks")
+clear_parser.add_argument("-f", "--force", action="store_true", help="Skip confirmation prompt")
 
 
 
@@ -49,22 +56,26 @@ remove_parser.add_argument("task_identifier",nargs="+", help="Task ID or title t
 def main():
     args = parser.parse_args()
 
+#         <---add--->
     if args.command == "add":
         titlee = " ".join(args.title)
         commands.add_task(titlee)
     
+#           <---done--->
     elif args.command == "done":
         task_identifier = " ".join(args.task)
         commands.mark_done(task_identifier)
 
+#          <---undone--->
     elif args.command == "undone":
         commands.mark_undone(args.task_identifier)
 
+#           <---remove--->
     elif args.command == "remove":
         remove = " ".join(args.task_identifier)
         commands.remove_task(remove)
 
-
+#            <---list--->
     elif args.command == "list":
         if args.done:
             commands.list_tasks(filter_status="done")
@@ -72,6 +83,16 @@ def main():
             commands.list_tasks(filter_status="pending")
         else:
             commands.list_tasks()
+
+#              <---clear--->
+    elif args.command == "clear":
+        if args.done:
+            commands.clear_tasks("done", force=args.force)
+        elif args.pending:
+            commands.clear_tasks("pending", force=args.force)
+        else:
+            commands.clear_tasks(force=args.force)
+
 
     else:
         parser.print_help()

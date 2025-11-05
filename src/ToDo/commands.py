@@ -119,3 +119,62 @@ def remove_task(task_identifier):
 
     finally:
         conn.close()
+
+
+
+def clear_tasks(filter_status=None, force=False):
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        # توضیح پیام بر اساس وضعیت
+        if filter_status == "done":
+            message = "All completed tasks will be deleted. Are you sure? (y/n): "
+        elif filter_status == "pending":
+            message = "All running tasks will be deleted. Are you sure? (y/n): "
+        else:
+            message = "This will delete all tasks and reset the ids! Are you sure? (y/n): "
+
+        # اگه force فعال نباشه، تأییدیه بگیر
+        if not force:
+            confirm = input(message).strip().lower()
+            if confirm != "y":
+                print("The operation was canceled.")
+                return
+
+        # حذف رکوردها
+        if filter_status == "done":
+            cur.execute("DELETE FROM tasks WHERE status='done'")
+            print("Completed tasks were deleted.")
+        elif filter_status == "pending":
+            cur.execute("DELETE FROM tasks WHERE status='pending'")
+            print("Tasks in progress were deleted.")
+        else:
+            cur.execute("DELETE FROM tasks")
+            cur.execute("DELETE FROM sqlite_sequence WHERE name='tasks'")
+            print("All tasks were deleted and the counter was reset.")
+
+        conn.commit()
+
+    except Exception as e:
+        print("Error deleting tasks:", e)
+
+    finally:
+        conn.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
