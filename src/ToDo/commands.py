@@ -203,36 +203,6 @@ def edit_task(identifier, new_title):
         conn.close()
 
 
-def edit_task_interactive(identifier):
-
-    conn = get_connection()
-    cur = conn.cursor()
-    try:
-        if identifier.isdigit():
-            cur.execute("SELECT id, title FROM tasks WHERE id = ?", (int(identifier),))
-        else:
-            cur.execute("SELECT id, title FROM tasks WHERE title = ?", (identifier,))
-
-        row = cur.fetchone()
-        if not row:
-            print("No tasks found.")
-            return
-
-        task_id, old_title = row
-        print(f"Current task title #{task_id}: {old_title}")
-        new_title = input("Enter a new title (leave blank and press Enter to cancel): ").strip()
-        if not new_title:
-            print("The editing operation was canceled.")
-            return
-
-        cur.execute("UPDATE tasks SET title = ? WHERE id = ?", (new_title, task_id))
-        conn.commit()
-        print(f" Task #{task_id} was successfully changed to '{new_title}'.")
-
-    except Exception as e:
-        print("Error editing task (interactive):", e)
-    finally:
-        conn.close()
 
 
 

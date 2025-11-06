@@ -50,8 +50,8 @@ clear_parser.add_argument("-f", "--force", action="store_true", help="Skip confi
 # --- edite command ---
 
 edit_parser = subparsers.add_parser("edit", help="Edit a task by ID or title")
-edit_parser.add_argument("identifier", nargs="+", help="Task ID or current title (if multi-word, just type words without quotes)")
-edit_parser.add_argument("new_title", nargs="+", help="New title for the task (if omitted, interactive mode will ask)")
+edit_parser.add_argument("identifier", nargs="+", help="Task ID or current title (if multi-word, just type words with double quotes) + ")
+edit_parser.add_argument("new_title", nargs="+",)
 
 # --- version ---
 
