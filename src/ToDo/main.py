@@ -1,5 +1,7 @@
 import argparse
 from . import commands
+from .config import APP_VERSION
+
 
 # --- argparse config ---
 parser = argparse.ArgumentParser(
@@ -45,10 +47,15 @@ group.add_argument("-d", "--done", action="store_true", help="Clear only done ta
 group.add_argument("-p", "--pending", action="store_true", help="Clear only pending tasks")
 clear_parser.add_argument("-f", "--force", action="store_true", help="Skip confirmation prompt")
 
+# --- edite command ---
 
+edit_parser = subparsers.add_parser("edit", help="Edit a task by ID or title")
+edit_parser.add_argument("identifier", nargs="+", help="Task ID or current title (if multi-word, just type words without quotes)")
+edit_parser.add_argument("new_title", nargs="+", help="New title for the task (if omitted, interactive mode will ask)")
 
+# --- version ---
 
-
+parser.add_argument("-v", "--version", action="store_true", help="Show app version")
 
 
 
@@ -93,9 +100,28 @@ def main():
         else:
             commands.clear_tasks(force=args.force)
 
+#              <---edit--->
+    elif args.command == "edit":
+        # join identifier parts to single string (e.g. ["learn","python"] -> "learn python")
+        identifier = " ".join(args.identifier).strip()
+
+        if args.new_title:
+            new_title = " ".join(args.new_title).strip()
+            commands.edit_task(identifier, new_title)
+        else:
+            # interactive mode: show current title and ask for new title
+            commands.edit_task_interactive(identifier)
+
+    elif args.version:
+        print(f"Erlave ToDo CLI v{APP_VERSION} ")
+        return
+    
+
 
     else:
         parser.print_help()
+
+
 
 
 
