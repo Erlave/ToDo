@@ -13,7 +13,7 @@ build/
 dist/
 *.egg-info/
 installer/*.exe
-
+installer/
 # Database & local data
 data/
 *.db
