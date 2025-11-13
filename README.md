@@ -29,6 +29,13 @@ todo done 1
 todo remove 2
 todo clear --pending
 ```
+## Note
+> 💡 **Note:**
+> Because this app is independently developed and doesn’t yet include a verified digital signature, your browser or Windows might show a warning such as *“This file may be unsafe”* or *“Unknown Publisher”*.
+>
+> Don’t worry — the installer is completely safe and officially distributed by [**Erlave.ir**](https://erlave.ir).
+>
+> If you see a security prompt, simply click **Keep / Run anyway** to proceed with the installation.
 
 ---
 
